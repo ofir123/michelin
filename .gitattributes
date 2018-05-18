@@ -1,0 +1,5 @@
+# Default behavior.
+* text=auto
+
+# Don't mess with shell scripts line endings.
+*.sh text eol=lf
