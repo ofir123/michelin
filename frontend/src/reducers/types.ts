@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {RouteComponentProps} from 'react-router';
+import {RouterState} from 'react-router-redux';
 
 export interface AuthDetails {
   readonly isAuthenticated: boolean;
@@ -44,10 +45,16 @@ export interface OrganizationState {
   readonly details: Organization | null;
 }
 
+export interface ViewportState {
+  readonly viewport: string;
+}
+
 export interface State {
   readonly auth: AuthState;
   readonly notifications: NotificationsState;
   readonly organization: OrganizationState;
+  readonly router: RouterState;
+  readonly viewport: ViewportState;
 }
 
 export interface RouterData {

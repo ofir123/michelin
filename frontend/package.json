@@ -23,9 +23,11 @@
     "react-fittext": "^1.0.0",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
+    "react-router-redux": "^4.0.8",
     "react-scripts-ts": "^2.15.1",
     "redux": "^3.7.2",
-    "redux-thunk": "^2.2.0"
+    "redux-thunk": "^2.2.0",
+    "url-pattern": "^1.0.3"
   },
   "scripts": {
     "build-ts": "tsc -p tsconfig.build.json",
@@ -64,6 +66,7 @@
     "@types/react-redux": "^6.0.0",
     "@types/react-router": "^4.0.25",
     "@types/react-router-dom": "^4.2.5",
+    "@types/react-router-redux": "^5.0.15",
     "@types/redux-devtools-extension": "^2.13.2",
     "@types/stylus": "^0.48.29",
     "@types/typescript": "^2.0.0",
