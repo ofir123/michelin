@@ -6,11 +6,11 @@ import {ActionsUnion} from './types';
 export const SET_VIEWPORT = 'SET_VIEWPORT';
 
 export const ViewportActions = {
-  setViewport: (viewport: string) => createAction(SET_VIEWPORT, viewport),
+  setViewport: (layout:string, viewport: string) => createAction(SET_VIEWPORT, {layout, viewport}),
 };
 
 export type ViewportActions = ActionsUnion<typeof ViewportActions>;
 
-export const setViewport = (viewport: string) => async (dispatch: Dispatch<State>) => {
-  dispatch(ViewportActions.setViewport(viewport));
+export const setViewport = (layout:string, viewport: string) => async (dispatch: Dispatch<State>) => {
+  dispatch(ViewportActions.setViewport(layout, viewport));
 };

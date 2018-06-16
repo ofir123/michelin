@@ -46,7 +46,8 @@ export interface OrganizationState {
 }
 
 export interface ViewportState {
-  readonly viewport: string;
+  readonly layout: string;
+  readonly viewport: string | null;
 }
 
 export interface State {

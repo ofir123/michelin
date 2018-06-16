@@ -1,8 +1,6 @@
 import {Alert, Button, Checkbox, Form, Icon, Input} from 'antd';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {RouteComponentProps} from 'react-router';
-import {Link, withRouter} from 'react-router-dom';
 import {bindActionCreators, Dispatch} from 'redux';
 import {loginIfNeeded} from '../../actions/auth';
 import * as routes from '../../constants/routes';
@@ -28,7 +26,7 @@ interface State {
   errorMessage: string;
 }
 
-interface LoginFormProps extends RouteComponentProps<{}>, OwnProps, DispatchProps, StateProps {}
+type LoginFormProps = OwnProps & DispatchProps & StateProps;
 
 interface FormProps {
   email: string;
@@ -48,7 +46,7 @@ class LoginForm extends React.Component<LoginFormProps, State> {
     e.preventDefault();
     this.props.form.validateFields((err: string, values: FormProps) => {
       if (!err) {
-        this.props.loginIfNeeded(values.email, values.password, values.remember, this.props.history);
+        this.props.loginIfNeeded(values.email, values.password, values.remember);
       } else {
         this.setState({
           errorMessage: err,
@@ -142,7 +140,7 @@ const mapDispatchToProps = (dispatch: Dispatch<stateTypes.State>) => {
   );
 };
 
-const ConnectedLogin = withRouter(
-  connect<StateProps, DispatchProps>(mapStateToProps, mapDispatchToProps)(Form.create()(LoginForm)),
+const ConnectedLogin = connect<StateProps, DispatchProps>(mapStateToProps, mapDispatchToProps)(
+  Form.create()(LoginForm),
 );
 export default ConnectedLogin;

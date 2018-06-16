@@ -23,7 +23,7 @@ const shouldLogin = (state: State) => {
   return !auth.isFetching;
 };
 
-export const loginIfNeeded = (email: string, password: string, remember: boolean, history: History) => async (
+export const loginIfNeeded = (email: string, password: string, remember: boolean) => async (
   dispatch: Dispatch<State>,
   getState: GetState,
 ) => {

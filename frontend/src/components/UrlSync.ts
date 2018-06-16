@@ -10,8 +10,7 @@ import {getLocation} from '../reducers/rootReducer';
 import * as stateTypes from '../reducers/types';
 import {getViewport} from '../reducers/viewport';
 
-const VIEWPORT_ONLY_URL = new UrlPattern('/:viewport');
-const VIEWPORT_WITH_OBJECT_ID_URL = new UrlPattern('/:viewport/:objectId');
+const VIEWPORT_URL = new UrlPattern('/:layout/:viewport');
 
 type StateProps = {
   viewport: stateTypes.ViewportState;
@@ -20,7 +19,7 @@ type StateProps = {
 
 type DispatchProps = {
   push: typeof push;
-  setViewport: (viewport: string) => ThunkAction<void, stateTypes.State, void>;
+  setViewport: (layout:string, viewport: string) => ThunkAction<void, stateTypes.State, void>;
 };
 
 type URLSyncProps = StateProps & DispatchProps;
@@ -29,17 +28,10 @@ class URLSync extends React.Component<URLSyncProps> {
   updateStateFromUrl = () => {
     const locationPathname = this.props.location ? encodeURI(this.props.location.pathname) : '/';
 
-    let matchResult = VIEWPORT_WITH_OBJECT_ID_URL.match(locationPathname);
+    const matchResult = VIEWPORT_URL.match(locationPathname);
 
     if (matchResult !== null) {
-      this.props.setViewport(matchResult.viewport);
-      return;
-    }
-
-    matchResult = VIEWPORT_ONLY_URL.match(locationPathname);
-
-    if (matchResult !== null) {
-      setViewport(matchResult.viewport);
+      this.props.setViewport(matchResult.layout, matchResult.viewport);
       return;
     }
 
@@ -50,13 +42,13 @@ class URLSync extends React.Component<URLSyncProps> {
     let expectedUrl;
 
     if (this.props.viewport) {
-      expectedUrl = VIEWPORT_ONLY_URL.stringify({viewport: this.props.viewport});
+      expectedUrl = VIEWPORT_URL.stringify(this.props.viewport);
     } else {
-      throw new Error(`Invalid state was provided ${JSON.stringify(this.props)}, URL cannot be computed`);
+      throw new Error(`No viewport in state! URL cannot be computed!`);
     }
 
     expectedUrl = decodeURI(expectedUrl);
-    if (expectedUrl !== this.props.location.pathname) {
+    if (!this.props.location || expectedUrl !== this.props.location.pathname) {
       this.props.push(expectedUrl);
     }
   };

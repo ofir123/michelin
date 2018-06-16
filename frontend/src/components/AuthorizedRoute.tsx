@@ -1,21 +1,23 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {RouteComponentProps, RouteProps} from 'react-router';
-import {Redirect, Route} from 'react-router-dom';
+import {push} from 'react-router-redux';
 import {bindActionCreators, Dispatch} from 'redux';
 import {LoginActions} from '../actions/auth';
+import {ViewportActions} from '../actions/viewport';
 import * as api from '../api';
 import {getAuthDetails} from '../reducers/auth';
 import {AuthDetails, State} from '../reducers/types';
 
-interface OwnProps extends RouteProps {
+interface OwnProps {
+  component: React.ReactNode;
   redirectPath: string;
-  render?: ((props: RouteComponentProps<any>) => React.ReactNode);
   roles: ReadonlyArray<string>;
 }
 
 interface DispatchProps {
   loginSuccess: typeof LoginActions.loginSuccess;
+  setViewport: typeof ViewportActions.setViewport;
+  push: typeof push;
 }
 
 interface StateProps {
@@ -45,16 +47,12 @@ class AuthorizedRoute extends React.Component<AuthorizedRouteProps> {
   }
 
   render() {
-    const {auth, component: Component, render, roles, redirectPath, ...rest} = this.props;
+    const {auth, component, roles, redirectPath} = this.props;
     if (auth.isAuthenticated && auth.role && roles.indexOf(auth.role) !== -1) {
-      if (Component) {
-        return <Route {...rest} render={props => <Component {...props} />} />;
-      }
-      if (render) {
-        return <Route {...rest} render={props => render(props)} />;
-      }
+      return component;
     }
-    return <Route {...rest} render={() => <Redirect to={{pathname: redirectPath}} />} />;
+    this.props.push(redirectPath);
+    return null;
   }
 }
 
@@ -68,6 +66,8 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) => {
   return bindActionCreators(
     {
       loginSuccess: LoginActions.loginSuccess,
+      setViewport: ViewportActions.setViewport,
+      push,
     },
     dispatch,
   );

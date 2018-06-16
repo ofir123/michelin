@@ -2,7 +2,8 @@ import * as FromActions from '../actions/viewport';
 import {State, ViewportState} from './types';
 
 export const initialState: ViewportState = {
-  viewport: '/',
+  layout: '/',
+  viewport: null,
 };
 
 export const viewport = (state = initialState, action: FromActions.ViewportActions) => {
