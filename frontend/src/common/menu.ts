@@ -1,6 +1,5 @@
 import * as roles from '../constants/roles';
 import * as stateTypes from '../reducers/types';
-import {isUrl} from '../utils/routing';
 
 const menuData: stateTypes.MenuData = [
   {
@@ -29,7 +28,26 @@ const menuData: stateTypes.MenuData = [
       },
     ],
   },
+  {
+    name: 'Exception',
+    icon: 'exception',
+    path: 'exception',
+    hideInMenu: true,
+    children: [
+      {
+        name: '404',
+        path: '404',
+      },
+    ],
+  },
 ];
+
+function isUrl(path: string) {
+  // tslint:disable
+  const URL_REG = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/g;
+
+  return URL_REG.test(path);
+}
 
 function formatter(data: stateTypes.MenuData, parentPath: string = '', parentRoles: string[] = []) {
   return data.map(item => {

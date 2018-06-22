@@ -3,20 +3,20 @@ import enUS from 'antd/lib/locale-provider/en_US';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
-import { ConnectedRouter } from 'react-router-redux';
-import {MichelinApp} from './App';
+import {ConnectedRouter} from 'react-router-redux';
+import MichelinApp from './App';
 import './index.css';
 import registerServiceWorker from './registerServiceWorker';
 import {store} from './store';
-import history from './store/history';
+import {history} from './store/history';
 
 const render = () =>
   ReactDOM.render(
     <Provider store={store}>
       <ConnectedRouter history={history}>
-      <LocaleProvider locale={enUS}>
-        <MichelinApp />
-      </LocaleProvider>
+        <LocaleProvider locale={enUS}>
+          <MichelinApp />
+        </LocaleProvider>
       </ConnectedRouter>
     </Provider>,
     document.getElementById('root'),

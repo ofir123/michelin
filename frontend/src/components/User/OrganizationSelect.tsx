@@ -112,5 +112,5 @@ const mapStateToProps = (state: stateTypes.State) => {
   };
 };
 
-const ConnectedOrganizationSelect = connect<StateProps>(mapStateToProps, {})(OrganizationSelect);
+const ConnectedOrganizationSelect = connect<StateProps>(mapStateToProps)(OrganizationSelect);
 export default ConnectedOrganizationSelect;

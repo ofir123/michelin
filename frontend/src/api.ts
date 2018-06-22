@@ -1,7 +1,6 @@
 import axios, {AxiosError, AxiosResponse} from 'axios';
 import {logoutAndRedirect} from './actions/auth';
 import {store} from './store';
-import history from './store/history';
 
 const BACKEND_URL = '/api/v1';
 
@@ -30,7 +29,7 @@ const handleError = (error: AxiosError) => {
     const status = error.response.status;
 
     if (status === 401) {
-      store.dispatch(logoutAndRedirect(history));
+      store.dispatch(logoutAndRedirect());
     }
 
     const actualError = error.response.data.error;
@@ -79,12 +78,6 @@ export const loadOrganizations = () =>
 export const getOrganization = (organizationId: number, token: string) =>
   axios
     .get(`${BACKEND_URL}/organization/${organizationId}`, tokenConfig(token))
-    .then(handleResponse)
-    .catch(handleError);
-
-export const loadRules = (token: string) =>
-  axios
-    .get(`${BACKEND_URL}/rule`, tokenConfig(token))
     .then(handleResponse)
     .catch(handleError);
 

@@ -1,23 +1,21 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {push} from 'react-router-redux';
 import {bindActionCreators, Dispatch} from 'redux';
 import {LoginActions} from '../actions/auth';
 import {ViewportActions} from '../actions/viewport';
 import * as api from '../api';
+import * as routes from '../constants/routes';
 import {getAuthDetails} from '../reducers/auth';
 import {AuthDetails, State} from '../reducers/types';
 
 interface OwnProps {
   component: React.ReactNode;
-  redirectPath: string;
   roles: ReadonlyArray<string>;
 }
 
 interface DispatchProps {
   loginSuccess: typeof LoginActions.loginSuccess;
   setViewport: typeof ViewportActions.setViewport;
-  push: typeof push;
 }
 
 interface StateProps {
@@ -47,11 +45,11 @@ class AuthorizedRoute extends React.Component<AuthorizedRouteProps> {
   }
 
   render() {
-    const {auth, component, roles, redirectPath} = this.props;
+    const {auth, component, roles} = this.props;
     if (auth.isAuthenticated && auth.role && roles.indexOf(auth.role) !== -1) {
       return component;
     }
-    this.props.push(redirectPath);
+    this.props.setViewport(routes.LOGIN);
     return null;
   }
 }
@@ -62,18 +60,18 @@ const mapStateToProps = (state: State) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch<State>) => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
       loginSuccess: LoginActions.loginSuccess,
       setViewport: ViewportActions.setViewport,
-      push,
     },
     dispatch,
   );
 };
 
-const ConnectedAuthorizedRoute = connect<StateProps, DispatchProps>(mapStateToProps, mapDispatchToProps)(
-  AuthorizedRoute,
-);
+const ConnectedAuthorizedRoute = connect<StateProps, DispatchProps>(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AuthorizedRoute);
 export default ConnectedAuthorizedRoute;

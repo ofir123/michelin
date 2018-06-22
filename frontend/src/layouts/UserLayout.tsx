@@ -2,14 +2,15 @@ import {Icon} from 'antd';
 import * as React from 'react';
 import DocumentTitle from 'react-document-title';
 import {connect} from 'react-redux';
-import {RouteComponentProps} from 'react-router';
-import {Link, Redirect, Route, Switch, withRouter} from 'react-router-dom';
+import {bindActionCreators, Dispatch} from 'redux';
+import {ThunkAction} from 'redux-thunk';
+import {setViewport, ViewportActions} from '../actions/viewport';
 import logo from '../assets/michelin-logo.png';
 import {GlobalFooter} from '../components/GlobalFooter/index';
 import * as routes from '../constants/routes';
 import {getAuthStatus} from '../reducers/auth';
 import * as stateTypes from '../reducers/types';
-import {getRoutes} from '../utils/routing';
+import {getViewport} from '../reducers/viewport';
 import './UserLayout.css';
 
 const links = [
@@ -42,49 +43,47 @@ interface OwnProps {
 
 interface StateProps {
   auth: stateTypes.AuthStatus;
+  viewport: stateTypes.ViewportState;
 }
 
-interface UserLayoutProps extends RouteComponentProps<{}>, OwnProps, StateProps {}
+type DispatchProps = {
+  setViewport: (viewport: string) => ThunkAction<void, stateTypes.State, void, ViewportActions>;
+};
+
+type UserLayoutProps = OwnProps & StateProps & DispatchProps;
 
 class UserLayout extends React.PureComponent<UserLayoutProps> {
-  getPageTitle() {
-    const {routerData, history} = this.props;
-    const {pathname} = history.location;
-    let title = 'Michelin';
-    if (routerData[pathname] && routerData[pathname].name) {
-      title = `${routerData[pathname].name} - ${title}`;
-    }
-    return title;
-  }
-
   componentWillMount() {
     // Redirect if user is already logged in.
     if (this.props.auth.isAuthenticated) {
-      this.props.history.push(routes.DEFAULT);
+      this.props.setViewport(routes.DEFAULT);
     }
   }
 
   render() {
-    const {routerData, match} = this.props;
+    const {routerData} = this.props;
+    const {viewport} = this.props.viewport;
+
+    const content = routerData[viewport];
+    if (!content) {
+      this.props.setViewport(routes.LOGIN);
+      return null;
+    }
+
     return (
-      <DocumentTitle title={this.getPageTitle()}>
+      <DocumentTitle title={'Michelin'}>
         <div className={'container'}>
           <div className={'content'}>
             <div className={'top'}>
               <div className={'user-header'}>
-                <Link to="/">
+                <a href="/">
                   <img alt="logo" className={'logo'} src={logo} />
                   <span className={'title'}>Michelin</span>
-                </Link>
+                </a>
               </div>
               <div className={'desc'}>A React+Redux Boilerplate</div>
             </div>
-            <Switch>
-              {getRoutes(match.path, routerData).map(item => (
-                <Route key={item.key} path={item.path} component={item.component} exact={item.exact} />
-              ))}
-              <Redirect exact={true} from={routes.USER} to={routes.LOGIN} />
-            </Switch>
+            {content.component}
           </div>
           <GlobalFooter links={links} copyright={copyright} />
         </div>
@@ -96,8 +95,21 @@ class UserLayout extends React.PureComponent<UserLayoutProps> {
 const mapStateToProps = (state: stateTypes.State) => {
   return {
     auth: getAuthStatus(state),
+    viewport: getViewport(state),
   };
 };
 
-const ConnectedUserLayout = withRouter(connect<StateProps>(mapStateToProps, {})(UserLayout));
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators(
+    {
+      setViewport,
+    },
+    dispatch,
+  );
+};
+
+const ConnectedUserLayout = connect<StateProps, DispatchProps>(
+  mapStateToProps,
+  mapDispatchToProps,
+)(UserLayout);
 export default ConnectedUserLayout;

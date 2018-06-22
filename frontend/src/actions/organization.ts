@@ -28,7 +28,7 @@ const shouldGetOrganization = (state: State) => {
 };
 
 export const getOrganizationIfNeeded = (organizationId: number, token: string) => async (
-  dispatch: Dispatch<State>,
+  dispatch: Dispatch,
   getState: GetState,
 ) => {
   const state = getState();

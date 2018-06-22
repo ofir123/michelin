@@ -1,4 +1,4 @@
-declare module 'rc-drawer-menu' {
+declare module 'rc-drawer' {
   import * as React from 'react';
 
   interface DrawerMenuProps {

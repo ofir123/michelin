@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {RouteComponentProps} from 'react-router';
 import {RouterState} from 'react-router-redux';
 
 export interface AuthDetails {
@@ -46,8 +45,7 @@ export interface OrganizationState {
 }
 
 export interface ViewportState {
-  readonly layout: string;
-  readonly viewport: string | null;
+  readonly viewport: string;
 }
 
 export interface State {
@@ -62,7 +60,7 @@ export interface RouterData {
   readonly [key: string]: {
     readonly name: string;
     readonly roles: ReadonlyArray<string>;
-    component?: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any>;
+    component?: React.ComponentType<React.ComponentType<any>>;
   };
 }
 

@@ -1,7 +1,10 @@
 import {Icon, Layout} from 'antd';
 import * as React from 'react';
 import DocumentTitle from 'react-document-title';
-import {Redirect, Route, Switch} from 'react-router-dom';
+import {connect} from 'react-redux';
+import {bindActionCreators, Dispatch} from 'redux';
+import {ThunkAction} from 'redux-thunk';
+import {setViewport, ViewportActions} from '../actions/viewport';
 import logo from '../assets/michelin-logo.png';
 import {getMenuData} from '../common/menu';
 import AuthorizedRoute from '../components/AuthorizedRoute';
@@ -9,56 +12,39 @@ import {GlobalFooter} from '../components/GlobalFooter';
 import {GlobalHeader} from '../components/GlobalHeader';
 import {DrawerSiderMenu} from '../components/SiderMenu';
 import * as routes from '../constants/routes';
+import {getAuthStatus} from '../reducers/auth';
 import * as stateTypes from '../reducers/types';
-import {NotFoundError} from '../routes/Exception';
+import {getViewport} from '../reducers/viewport';
 import {enquireScreen, unenquireScreen} from '../utils/media';
-import {getRoutes} from '../utils/routing';
 
 const {Content} = Layout;
-
-// Set default redirect to first child, for every parent in the menu.
-const redirectData: Array<{
-  from: string;
-  to: string;
-}> = [];
-const getRedirect = (item: stateTypes.MenuItem) => {
-  if (item && item.children) {
-    if (item.children[0] && item.children[0].path) {
-      redirectData.push({
-        from: `/${item.path}`,
-        to: `/${item.children[0].path}`,
-      });
-      item.children.forEach(children => {
-        getRedirect(children);
-      });
-    }
-  }
-};
-getMenuData().forEach(getRedirect);
 
 let isMobile: boolean;
 enquireScreen(result => {
   isMobile = result;
 });
 
-type Props = {
-  location: {
-    pathname: string;
-  };
-  match: {
-    path: string;
-    url: string;
-    isExact: boolean;
-  };
+interface OwnProps {
   routerData: stateTypes.RouterData;
+}
+
+interface StateProps {
+  auth: stateTypes.AuthStatus;
+  viewport: stateTypes.ViewportState;
+}
+
+type DispatchProps = {
+  setViewport: (viewport: string) => ThunkAction<void, stateTypes.State, void, ViewportActions>;
 };
+
+type BasicLayoutProps = OwnProps & StateProps & DispatchProps;
 
 type State = {
   isMobile: boolean;
   menuCollapsed: boolean;
 };
 
-export default class BasicLayout extends React.PureComponent<Props, State> {
+class BasicLayout extends React.PureComponent<BasicLayoutProps, State> {
   state = {
     isMobile,
     menuCollapsed: false,
@@ -79,11 +65,13 @@ export default class BasicLayout extends React.PureComponent<Props, State> {
   }
 
   getPageTitle() {
-    const {routerData, location} = this.props;
-    const {pathname} = location;
+    const {routerData} = this.props;
+    const {viewport} = this.props.viewport;
+
     let title = 'Michelin';
-    if (routerData[pathname] && routerData[pathname].name) {
-      title = `${routerData[pathname].name} - Michelin`;
+    const viewportData = routerData[viewport];
+    if (viewportData && viewportData.name) {
+      title = `${viewportData.name} - ${title}`;
     }
     return title;
   }
@@ -95,7 +83,21 @@ export default class BasicLayout extends React.PureComponent<Props, State> {
   };
 
   render() {
-    const {routerData, match} = this.props;
+    const {routerData} = this.props;
+    const {viewport} = this.props.viewport;
+
+    // Default route.
+    if (viewport === '/') {
+      this.props.setViewport(routes.ANALYSIS);
+      return null;
+    }
+
+    const content = routerData[viewport];
+    if (!content) {
+      this.props.setViewport(routes.NOT_FOUND_ERROR);
+      return null;
+    }
+
     const layout = (
       <Layout>
         <DrawerSiderMenu
@@ -113,21 +115,7 @@ export default class BasicLayout extends React.PureComponent<Props, State> {
             onMenuCollapse={this.handleMenuCollapse}
           />
           <Content style={{margin: '24px 24px 0', height: '100%'}}>
-            <Switch>
-              {redirectData.map(item => <Redirect key={item.from} exact={true} from={item.from} to={item.to} />)}
-              {getRoutes(match.path, routerData).map(item => (
-                <AuthorizedRoute
-                  key={item.key}
-                  path={item.path}
-                  component={item.component}
-                  exact={item.exact}
-                  roles={item.roles}
-                  redirectPath={routes.NOT_FOUND_ERROR}
-                />
-              ))}
-              <Redirect exact={true} from="/" to={routes.ANALYSIS} />
-              <Route render={NotFoundError} />
-            </Switch>
+            <AuthorizedRoute component={content.component} roles={content.roles} />
           </Content>
           <GlobalFooter
             copyright={
@@ -143,3 +131,25 @@ export default class BasicLayout extends React.PureComponent<Props, State> {
     return <DocumentTitle title={this.getPageTitle()}>{layout}</DocumentTitle>;
   }
 }
+
+const mapStateToProps = (state: stateTypes.State) => {
+  return {
+    auth: getAuthStatus(state),
+    viewport: getViewport(state),
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators(
+    {
+      setViewport,
+    },
+    dispatch,
+  );
+};
+
+const ConnectedBasicLayout = connect<StateProps, DispatchProps>(
+  mapStateToProps,
+  mapDispatchToProps,
+)(BasicLayout);
+export default ConnectedBasicLayout;

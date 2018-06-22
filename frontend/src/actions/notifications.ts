@@ -26,7 +26,7 @@ const shouldLoadNotifications = (state: State) => {
   return !notifications.isFetching;
 };
 
-export const loadNotificationsIfNeeded = (token: string) => async (dispatch: Dispatch<State>, getState: GetState) => {
+export const loadNotificationsIfNeeded = (token: string) => async (dispatch: Dispatch, getState: GetState) => {
   const state = getState();
   if (shouldLoadNotifications(state)) {
     dispatch(LoadNotificationsActions.loadNotificationsRequest());
@@ -57,7 +57,7 @@ const shouldClearNotifications = (state: State) => {
   return notifications.notifications.length > 0;
 };
 
-export const clearNotificationsIfNeeded = (token: string) => async (dispatch: Dispatch<State>, getState: GetState) => {
+export const clearNotificationsIfNeeded = (token: string) => async (dispatch: Dispatch, getState: GetState) => {
   const state = getState();
   if (shouldClearNotifications(state)) {
     dispatch(ClearNotificationsActions.clearNotificationsRequest());

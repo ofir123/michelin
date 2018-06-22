@@ -117,7 +117,7 @@ class LoginForm extends React.Component<LoginFormProps, State> {
             </Button>
           </Form.Item>
           <Button type={'primary'} className={'form-button'}>
-            <Link to={routes.REGISTER}>Sign Up</Link>
+            <a href={routes.REGISTER}>Sign Up</a>
           </Button>
         </Form>
       </div>
@@ -131,7 +131,7 @@ const mapStateToProps = (state: stateTypes.State) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch<stateTypes.State>) => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
       loginIfNeeded,
@@ -140,7 +140,8 @@ const mapDispatchToProps = (dispatch: Dispatch<stateTypes.State>) => {
   );
 };
 
-const ConnectedLogin = connect<StateProps, DispatchProps>(mapStateToProps, mapDispatchToProps)(
-  Form.create()(LoginForm),
-);
+const ConnectedLogin = connect<StateProps, DispatchProps>(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Form.create()(LoginForm));
 export default ConnectedLogin;

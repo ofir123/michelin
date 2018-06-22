@@ -1,15 +1,17 @@
 import {Avatar, Divider, Dropdown, Icon, Layout, Menu, Spin, Tag, Tooltip} from 'antd';
-import {History} from 'history';
 import {Debounce} from 'lodash-decorators';
 import * as moment from 'moment';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {RouteComponentProps} from 'react-router';
-import {Link, withRouter} from 'react-router-dom';
 import {bindActionCreators, Dispatch} from 'redux';
 import {ThunkAction} from 'redux-thunk';
-import {logoutAndRedirect} from '../../actions/auth';
-import {clearNotificationsIfNeeded, loadNotificationsIfNeeded} from '../../actions/notifications';
+import {LogoutAction, logoutAndRedirect} from '../../actions/auth';
+import {
+  ClearNotificationsActions,
+  clearNotificationsIfNeeded,
+  LoadNotificationsActions,
+  loadNotificationsIfNeeded,
+} from '../../actions/notifications';
 import {getAuthDetails} from '../../reducers/auth';
 import {getNotifications} from '../../reducers/notifications';
 import {State} from '../../reducers/types';
@@ -28,9 +30,9 @@ interface OwnProps {
 }
 
 interface DispatchProps {
-  loadNotificationsIfNeeded: (token: string | null) => ThunkAction<void, State, void>;
-  clearNotificationsIfNeeded: (token: string | null) => ThunkAction<void, State, void>;
-  logoutAndRedirect: (history: History) => ThunkAction<void, State, void>;
+  loadNotificationsIfNeeded: (token: string | null) => ThunkAction<void, State, void, LoadNotificationsActions>;
+  clearNotificationsIfNeeded: (token: string | null) => ThunkAction<void, State, void, ClearNotificationsActions>;
+  logoutAndRedirect: () => ThunkAction<void, State, void, LogoutAction>;
 }
 
 interface StateProps {
@@ -38,7 +40,7 @@ interface StateProps {
   notifications: stateTypes.NotificationsState;
 }
 
-interface GlobalHeaderProps extends RouteComponentProps<{}>, OwnProps, DispatchProps, StateProps {}
+type GlobalHeaderProps = OwnProps & DispatchProps & StateProps;
 
 class GlobalHeader extends React.PureComponent<GlobalHeaderProps> {
   componentWillMount() {
@@ -105,7 +107,7 @@ class GlobalHeader extends React.PureComponent<GlobalHeaderProps> {
 
   handleMenuClick = ({key}: {key: string}) => {
     if (key === 'logout') {
-      this.props.logoutAndRedirect(this.props.history);
+      this.props.logoutAndRedirect();
     }
   };
 
@@ -129,9 +131,9 @@ class GlobalHeader extends React.PureComponent<GlobalHeaderProps> {
     return (
       <Header className={'header'}>
         {isMobile && [
-          <Link to={'/'} className={'header-logo'} key={'logo'}>
+          <a href={'/'} className={'header-logo'} key={'logo'}>
             <img src={logo} alt="logo" width="32" />
-          </Link>,
+          </a>,
           <Divider type="vertical" key="line" />,
         ]}
         <Icon className={'trigger'} type={menuCollapsed ? 'menu-unfold' : 'menu-fold'} onClick={this.toggle} />
@@ -187,7 +189,7 @@ const mapStateToProps = (state: State) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch<State>) => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
       loadNotificationsIfNeeded,
@@ -198,7 +200,8 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) => {
   );
 };
 
-const ConnectedGlobalHeader = withRouter(
-  connect<StateProps, DispatchProps>(mapStateToProps, mapDispatchToProps)(GlobalHeader),
-);
+const ConnectedGlobalHeader = connect<StateProps, DispatchProps>(
+  mapStateToProps,
+  mapDispatchToProps,
+)(GlobalHeader);
 export default ConnectedGlobalHeader;

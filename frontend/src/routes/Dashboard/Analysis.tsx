@@ -80,7 +80,7 @@ const mapStateToProps = (state: stateTypes.State) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch<stateTypes.State>) => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
       getOrganizationIfNeeded,
@@ -89,5 +89,8 @@ const mapDispatchToProps = (dispatch: Dispatch<stateTypes.State>) => {
   );
 };
 
-const ConnectedAnalysis = connect<StateProps, DispatchProps>(mapStateToProps, mapDispatchToProps)(Analysis);
+const ConnectedAnalysis = connect<StateProps, DispatchProps>(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Analysis);
 export default ConnectedAnalysis;

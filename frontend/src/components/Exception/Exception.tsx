@@ -1,7 +1,6 @@
 import {Button} from 'antd';
 import classNames from 'classnames';
 import * as React from 'react';
-import {Link} from 'react-router-dom';
 import internalServerError from '../../assets/internal_server_error.svg';
 import notFoundError from '../../assets/not_found_error.svg';
 import unauthorizedAccessError from '../../assets/unauthorized_access_error.svg';
@@ -52,9 +51,9 @@ const Exception = (props: ExceptionProps) => {
         <div className={'desc'}>{desc || config[pageType].desc}</div>
         <div className={'actions'}>
           {actions || (
-            <Link to={routes.DEFAULT}>
+            <a href={routes.DEFAULT}>
               <Button type="primary">Return to Home Page</Button>,
-            </Link>
+            </a>
           )}
         </div>
       </div>

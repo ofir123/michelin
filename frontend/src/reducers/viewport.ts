@@ -1,15 +1,17 @@
+import {Reducer} from 'redux';
 import * as FromActions from '../actions/viewport';
 import {State, ViewportState} from './types';
 
 export const initialState: ViewportState = {
-  layout: '/',
-  viewport: null,
+  viewport: '',
 };
 
-export const viewport = (state = initialState, action: FromActions.ViewportActions) => {
+export const viewport: Reducer<ViewportState> = (state = initialState, action: FromActions.ViewportActions) => {
   switch (action.type) {
     case FromActions.SET_VIEWPORT:
-      return action.payload;
+      return {
+        viewport: action.payload,
+      };
     default:
       return state;
   }

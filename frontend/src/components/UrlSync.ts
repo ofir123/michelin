@@ -4,13 +4,10 @@ import {connect} from 'react-redux';
 import {push} from 'react-router-redux';
 import {bindActionCreators, Dispatch} from 'redux';
 import {ThunkAction} from 'redux-thunk';
-import UrlPattern from 'url-pattern';
-import {setViewport} from '../actions/viewport';
+import {setViewport, ViewportActions} from '../actions/viewport';
 import {getLocation} from '../reducers/rootReducer';
 import * as stateTypes from '../reducers/types';
 import {getViewport} from '../reducers/viewport';
-
-const VIEWPORT_URL = new UrlPattern('/:layout/:viewport');
 
 type StateProps = {
   viewport: stateTypes.ViewportState;
@@ -19,7 +16,7 @@ type StateProps = {
 
 type DispatchProps = {
   push: typeof push;
-  setViewport: (layout:string, viewport: string) => ThunkAction<void, stateTypes.State, void>;
+  setViewport: (viewport: string) => ThunkAction<void, stateTypes.State, void, ViewportActions>;
 };
 
 type URLSyncProps = StateProps & DispatchProps;
@@ -27,29 +24,20 @@ type URLSyncProps = StateProps & DispatchProps;
 class URLSync extends React.Component<URLSyncProps> {
   updateStateFromUrl = () => {
     const locationPathname = this.props.location ? encodeURI(this.props.location.pathname) : '/';
-
-    const matchResult = VIEWPORT_URL.match(locationPathname);
-
-    if (matchResult !== null) {
-      this.props.setViewport(matchResult.layout, matchResult.viewport);
-      return;
-    }
-
-    throw new Error(`Invalid URL was given: ${locationPathname}`);
+    this.props.setViewport(locationPathname);
   };
 
   updateUrlFromState = () => {
     let expectedUrl;
+    const {viewport} = this.props.viewport;
 
-    if (this.props.viewport) {
-      expectedUrl = VIEWPORT_URL.stringify(this.props.viewport);
+    if (viewport) {
+      expectedUrl = decodeURI(viewport);
+      if (!this.props.location || expectedUrl !== this.props.location.pathname) {
+        this.props.push(expectedUrl);
+      }
     } else {
       throw new Error(`No viewport in state! URL cannot be computed!`);
-    }
-
-    expectedUrl = decodeURI(expectedUrl);
-    if (!this.props.location || expectedUrl !== this.props.location.pathname) {
-      this.props.push(expectedUrl);
     }
   };
 
@@ -87,7 +75,7 @@ const mapStateToProps = (state: stateTypes.State) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch<stateTypes.State>) => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
       setViewport,
@@ -97,5 +85,8 @@ const mapDispatchToProps = (dispatch: Dispatch<stateTypes.State>) => {
   );
 };
 
-const ConnectedURLSync = connect<StateProps, DispatchProps>(mapStateToProps, mapDispatchToProps)(URLSync);
+const ConnectedURLSync = connect<StateProps, DispatchProps>(
+  mapStateToProps,
+  mapDispatchToProps,
+)(URLSync);
 export default ConnectedURLSync;

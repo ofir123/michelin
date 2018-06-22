@@ -1,10 +1,11 @@
 import {Icon, Layout, Menu} from 'antd';
-import {History} from 'history';
 import * as _ from 'lodash';
 import pathToRegexp from 'path-to-regexp';
 import * as React from 'react';
-import {Link} from 'react-router-dom';
+import {connect} from 'react-redux';
+import {getAuthDetails} from '../../reducers/auth';
 import * as stateTypes from '../../reducers/types';
+import {getViewport} from '../../reducers/viewport';
 import './SiderMenu.css';
 
 const {Sider} = Layout;
@@ -30,12 +31,11 @@ interface OwnProps {
   menuData: stateTypes.MenuData;
   collapsed: boolean;
   onCollapse: (isCollapsed: boolean) => void;
-  history: History;
-  auth: stateTypes.AuthDetails;
 }
 
 interface StateProps {
   auth: stateTypes.AuthDetails;
+  viewport: stateTypes.ViewportState;
 }
 
 type SiderMenuProps = OwnProps & StateProps;
@@ -48,17 +48,18 @@ class SiderMenu extends React.PureComponent<SiderMenuProps, State> {
   constructor(props: SiderMenuProps) {
     super(props);
     this.state = {
-      openKeys: this.getDefaultCollapsedSubMenus(props.history.location.pathname),
+      openKeys: this.getDefaultCollapsedSubMenus(props.viewport.viewport),
     };
   }
   componentWillReceiveProps(nextProps: SiderMenuProps) {
-    const nextPathname = nextProps.history.location.pathname;
-    if (nextPathname !== this.props.history.location.pathname) {
+    const nextPathname = nextProps.viewport.viewport;
+    if (nextPathname !== this.props.viewport.viewport) {
       this.setState({
         openKeys: this.getDefaultCollapsedSubMenus(nextPathname),
       });
     }
   }
+
   /**
    * Convert pathname to openKeys
    * /list/search/articles = > ['list','/list/search']
@@ -89,6 +90,7 @@ class SiderMenu extends React.PureComponent<SiderMenuProps, State> {
     // eg. ['list','list/search']
     return snippets;
   }
+
   /**
    * Recursively flatten the data
    * [{path:string},{path:string}] => {path,path2}
@@ -108,6 +110,7 @@ class SiderMenu extends React.PureComponent<SiderMenuProps, State> {
     }
     return keys;
   }
+
   /**
    * Get selected child nodes
    * /user/chen => /user/:id
@@ -118,6 +121,7 @@ class SiderMenu extends React.PureComponent<SiderMenuProps, State> {
       return pathToRegexp(`/${item}`).test(path);
     });
   };
+
   /**
    * Judge whether it is http link.return a or Link
    */
@@ -135,10 +139,9 @@ class SiderMenu extends React.PureComponent<SiderMenuProps, State> {
       );
     }
     return (
-      <Link
-        to={itemPath}
+      <a
+        href={itemPath}
         target={target}
-        replace={itemPath === this.props.history.location.pathname}
         onClick={
           this.props.isMobile
             ? () => {
@@ -149,9 +152,10 @@ class SiderMenu extends React.PureComponent<SiderMenuProps, State> {
       >
         {icon}
         <span>{name}</span>
-      </Link>
+      </a>
     );
   };
+
   /**
    * get SubMenu or Item
    */
@@ -218,7 +222,7 @@ class SiderMenu extends React.PureComponent<SiderMenuProps, State> {
   };
 
   render() {
-    const {logo, collapsed, menuData, history, onCollapse} = this.props;
+    const {logo, collapsed, menuData, viewport, onCollapse} = this.props;
     const {openKeys} = this.state;
     // Don't show popup menu when it is been collapsed
     const menuProps = collapsed
@@ -227,7 +231,7 @@ class SiderMenu extends React.PureComponent<SiderMenuProps, State> {
           openKeys,
         };
     // if pathname can't match, use the nearest parent's key
-    let selectedKeys = this.getSelectedMenuKeys(history.location.pathname);
+    let selectedKeys = this.getSelectedMenuKeys(viewport.viewport);
     if (!selectedKeys.length) {
       selectedKeys = [openKeys[openKeys.length - 1]];
     }
@@ -242,10 +246,10 @@ class SiderMenu extends React.PureComponent<SiderMenuProps, State> {
         className={'sider'}
       >
         <div className={'menu-logo'}>
-          <Link to="/">
+          <a href="/">
             <img src={logo} alt="logo" />
             <h1>Michelin</h1>
-          </Link>
+          </a>
         </div>
         <Menu
           key="Menu"
@@ -263,4 +267,12 @@ class SiderMenu extends React.PureComponent<SiderMenuProps, State> {
   }
 }
 
-export default SiderMenu;
+const mapStateToProps = (state: stateTypes.State) => {
+  return {
+    auth: getAuthDetails(state),
+    viewport: getViewport(state),
+  };
+};
+
+const ConnectedDrawerSiderMenu = connect<StateProps>(mapStateToProps)(SiderMenu);
+export default ConnectedDrawerSiderMenu;

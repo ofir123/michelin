@@ -1,8 +1,6 @@
 import {Alert, Button, Form, Icon, Input} from 'antd';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {RouteComponentProps} from 'react-router';
-import {Link, withRouter} from 'react-router-dom';
 import {bindActionCreators, Dispatch} from 'redux';
 import {registerIfNeeded} from '../../actions/auth';
 import {OrganizationSelect} from '../../components/User';
@@ -31,7 +29,7 @@ interface State {
   passwordCopyDirty: boolean;
 }
 
-interface RegisterFormProps extends RouteComponentProps<{}>, OwnProps, StateProps, DispatchProps {}
+type RegisterFormProps = OwnProps & StateProps & DispatchProps;
 
 interface FormProps {
   name: string;
@@ -55,13 +53,7 @@ class RegisterForm extends React.Component<RegisterFormProps, State> {
     e.preventDefault();
     this.props.form.validateFields((err: string, values: FormProps) => {
       if (!err) {
-        this.props.registerIfNeeded(
-          values.name,
-          values.email,
-          values.organization.organizationId,
-          values.password,
-          this.props.history,
-        );
+        this.props.registerIfNeeded(values.name, values.email, values.organization.organizationId, values.password);
       } else {
         this.setState({
           errorMessage: err,
@@ -187,7 +179,7 @@ class RegisterForm extends React.Component<RegisterFormProps, State> {
             </Button>
           </Form.Item>
           <Button type={'primary'} className={'form-button'}>
-            <Link to={routes.LOGIN}>Back to Login Page</Link>
+            <a href={routes.LOGIN}>Back to Login Page</a>
           </Button>
         </Form>
       </div>
@@ -201,7 +193,7 @@ const mapStateToProps = (state: stateTypes.State) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch<stateTypes.State>) => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
       registerIfNeeded,
@@ -210,7 +202,8 @@ const mapDispatchToProps = (dispatch: Dispatch<stateTypes.State>) => {
   );
 };
 
-const ConnectedRegister = withRouter(
-  connect<StateProps, DispatchProps>(mapStateToProps, mapDispatchToProps)(Form.create()(RegisterForm)),
-);
+const ConnectedRegister = connect<StateProps, DispatchProps>(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Form.create()(RegisterForm));
 export default ConnectedRegister;

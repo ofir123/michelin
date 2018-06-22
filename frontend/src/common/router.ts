@@ -59,6 +59,9 @@ export const getRouterData = () => {
     [routes.REGISTER_RESULT]: {
       component: dynamicWrapper(() => import('../routes/User/RegisterResult')),
     },
+    [routes.NOT_FOUND_ERROR]: {
+      component: dynamicWrapper(() => import('../routes/Exception/404')),
+    },
   };
 
   // Get name from ./menu.ts or just set it in the router data.

@@ -4,12 +4,12 @@ import {composeWithDevTools} from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 import {rootReducer} from '../reducers/rootReducer';
 import {State} from '../reducers/types';
-import history from './history';
+import {history} from './history';
 
 const configureStore = (initialState: State) => {
   const router = routerMiddleware(history);
 
-  const store = createStore<State>(rootReducer, initialState, composeWithDevTools(applyMiddleware(thunk, router)));
+  const store = createStore(rootReducer, initialState, composeWithDevTools(applyMiddleware(thunk, router)));
 
   // We can hook to webpack's API to replace the root reducer of the store, which will propagate back all the actions.
   const moduleAsAny = module as any;
@@ -20,4 +20,4 @@ const configureStore = (initialState: State) => {
   return store;
 };
 
-export {configureStore};
+export default configureStore;

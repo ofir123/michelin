@@ -1,7 +1,6 @@
 import {Button} from 'antd';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {Link} from 'react-router-dom';
 import {Result} from '../../components/Result/index';
 import * as routes from '../../constants/routes';
 import {getAuthDetails} from '../../reducers/auth';
@@ -11,9 +10,9 @@ import './RegisterResult.css';
 
 const actions = (
   <div className={'actions'}>
-    <Link to={routes.DEFAULT}>
+    <a href={routes.DEFAULT}>
       <Button size="large">Return to home page</Button>
-    </Link>
+    </a>
   </div>
 );
 
@@ -40,5 +39,5 @@ const mapStateToProps = (state: State) => {
   };
 };
 
-const ConnectedRegisterResult = connect<StateProps>(mapStateToProps, {})(RegisterResult);
+const ConnectedRegisterResult = connect<StateProps>(mapStateToProps)(RegisterResult);
 export default ConnectedRegisterResult;

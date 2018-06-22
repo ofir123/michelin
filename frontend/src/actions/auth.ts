@@ -1,4 +1,4 @@
-import {History} from 'history';
+import {push} from 'react-router-redux';
 import {Dispatch} from 'redux';
 import * as api from '../api';
 import * as routes from '../constants/routes';
@@ -24,7 +24,7 @@ const shouldLogin = (state: State) => {
 };
 
 export const loginIfNeeded = (email: string, password: string, remember: boolean) => async (
-  dispatch: Dispatch<State>,
+  dispatch: Dispatch,
   getState: GetState,
 ) => {
   const state = getState();
@@ -36,7 +36,7 @@ export const loginIfNeeded = (email: string, password: string, remember: boolean
       // Handle local storage here and not in the reducer, to keep reducer clean of side-effects.
       localStorage.setItem('token', response.token);
       dispatch(LoginActions.loginSuccess(response.token));
-      history.push(routes.DEFAULT);
+      dispatch(push(routes.DEFAULT));
     } catch (error) {
       dispatch(LoginActions.loginFailure(error.message));
     }
@@ -51,10 +51,10 @@ export const LogoutAction = {
 
 export type LogoutAction = ActionsUnion<typeof LogoutAction>;
 
-export const logoutAndRedirect = (history: History) => (dispatch: Dispatch<State>) => {
+export const logoutAndRedirect = () => (dispatch: Dispatch) => {
   localStorage.removeItem('token');
   dispatch(LogoutAction.logout());
-  history.push(routes.LOGIN);
+  dispatch(push(routes.LOGIN));
 };
 
 export const REGISTER_REQUEST = 'REGISTER_REQUEST';
@@ -74,13 +74,10 @@ const shouldRegister = (state: State) => {
   return !auth.isFetching;
 };
 
-export const registerIfNeeded = (
-  name: string,
-  email: string,
-  organizationId: number,
-  password: string,
-  history: History,
-) => async (dispatch: Dispatch<State>, getState: GetState) => {
+export const registerIfNeeded = (name: string, email: string, organizationId: number, password: string) => async (
+  dispatch: Dispatch,
+  getState: GetState,
+) => {
   const state = getState();
   if (shouldRegister(state)) {
     dispatch(RegisterActions.registerRequest());
@@ -90,7 +87,7 @@ export const registerIfNeeded = (
       // Handle local storage here and not in the reducer, to keep reducer clean of side-effects.
       localStorage.setItem('token', response.token);
       dispatch(RegisterActions.registerSuccess(response.token));
-      history.push(routes.REGISTER_RESULT);
+      dispatch(push(routes.REGISTER_RESULT));
     } catch (error) {
       dispatch(RegisterActions.registerFailure(error.message));
     }
