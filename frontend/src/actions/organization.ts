@@ -27,7 +27,7 @@ const shouldGetOrganization = (state: State) => {
   return _.isEmpty(organization.details);
 };
 
-export const getOrganizationIfNeeded = (organizationId: number, token: string) => async (
+export const getOrganizationIfNeeded = (organizationId: number, token: string | null) => async (
   dispatch: Dispatch,
   getState: GetState,
 ) => {

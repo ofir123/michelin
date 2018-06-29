@@ -3,8 +3,7 @@ import * as React from 'react';
 import DocumentTitle from 'react-document-title';
 import {connect} from 'react-redux';
 import {bindActionCreators, Dispatch} from 'redux';
-import {ThunkAction} from 'redux-thunk';
-import {setViewport, ViewportActions} from '../actions/viewport';
+import {setViewport} from '../actions/viewport';
 import logo from '../assets/michelin-logo.png';
 import {getMenuData} from '../common/menu';
 import AuthorizedRoute from '../components/AuthorizedRoute';
@@ -34,7 +33,7 @@ interface StateProps {
 }
 
 type DispatchProps = {
-  setViewport: (viewport: string) => ThunkAction<void, stateTypes.State, void, ViewportActions>;
+  setViewport: typeof setViewport;
 };
 
 type BasicLayoutProps = OwnProps & StateProps & DispatchProps;

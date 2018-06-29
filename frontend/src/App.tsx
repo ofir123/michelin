@@ -20,23 +20,23 @@ class MichelinApp extends React.Component<MichelinAppProps> {
     const UserLayout = routerData[routes.USER].component;
     const BasicLayout = routerData[routes.DEFAULT].component;
 
-    const layout = this.props.viewport.viewport.split('/')[0];
+    const layout = '/' + this.props.viewport.viewport.split('/')[1];
 
     let content;
 
     switch (layout) {
       case routes.USER:
-        content = UserLayout;
+        content = <UserLayout />;
         break;
       default:
         content = <AuthorizedRoute component={BasicLayout} roles={[roles.USER, roles.ADMIN]} />;
     }
 
     return (
-      <React.Fragment>
+      <>
         <URLSync />
         {content}
-      </React.Fragment>
+      </>
     );
   }
 }

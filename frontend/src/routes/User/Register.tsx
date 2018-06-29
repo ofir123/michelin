@@ -3,6 +3,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators, Dispatch} from 'redux';
 import {registerIfNeeded} from '../../actions/auth';
+import {setViewport} from '../../actions/viewport';
 import {OrganizationSelect} from '../../components/User';
 import * as routes from '../../constants/routes';
 import '../../index.css';
@@ -22,6 +23,7 @@ interface StateProps {
 
 interface DispatchProps {
   registerIfNeeded: typeof registerIfNeeded;
+  setViewport: typeof setViewport;
 }
 
 interface State {
@@ -172,14 +174,21 @@ class RegisterForm extends React.Component<RegisterFormProps, State> {
               ],
             })(<OrganizationSelect />)}
           </Form.Item>
-          {this.props.errorMessage && <Alert type={'error'} message={this.props.errorMessage} showIcon={true} />}
+          {this.props.auth.errorMessage && (
+            <Alert
+              style={{marginBottom: '20px'}}
+              type={'error'}
+              message={this.props.auth.errorMessage}
+              showIcon={true}
+            />
+          )}
           <Form.Item style={{marginBottom: '12px'}}>
-            <Button type={'primary'} htmlType={'submit'} className={'form-button'} loading={this.props.isFetching}>
+            <Button type={'primary'} htmlType={'submit'} className={'form-button'} loading={this.props.auth.isFetching}>
               Register
             </Button>
           </Form.Item>
-          <Button type={'primary'} className={'form-button'}>
-            <a href={routes.LOGIN}>Back to Login Page</a>
+          <Button type={'primary'} onClick={() => this.props.setViewport(routes.LOGIN)} className={'form-button'}>
+            Back to Login Page
           </Button>
         </Form>
       </div>
@@ -197,6 +206,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
       registerIfNeeded,
+      setViewport,
     },
     dispatch,
   );

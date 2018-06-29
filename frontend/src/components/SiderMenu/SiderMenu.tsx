@@ -3,6 +3,9 @@ import * as _ from 'lodash';
 import pathToRegexp from 'path-to-regexp';
 import * as React from 'react';
 import {connect} from 'react-redux';
+import {bindActionCreators, Dispatch} from 'redux';
+import {setViewport} from '../../actions/viewport';
+import * as routes from '../../constants/routes';
 import {getAuthDetails} from '../../reducers/auth';
 import * as stateTypes from '../../reducers/types';
 import {getViewport} from '../../reducers/viewport';
@@ -38,7 +41,11 @@ interface StateProps {
   viewport: stateTypes.ViewportState;
 }
 
-type SiderMenuProps = OwnProps & StateProps;
+interface DispatchProps {
+  setViewport: typeof setViewport;
+}
+
+type SiderMenuProps = OwnProps & StateProps & DispatchProps;
 
 type State = {
   openKeys: string[];
@@ -128,11 +135,11 @@ class SiderMenu extends React.PureComponent<SiderMenuProps, State> {
   getMenuItemPath = (item: stateTypes.MenuItem) => {
     const itemPath = this.conversionPath(item.path);
     const icon = getIcon(item.icon);
-    const {target, name} = item;
+    const {name} = item;
     // Is it a http link
     if (/^https?:\/\//.test(itemPath)) {
       return (
-        <a href={itemPath} target={target}>
+        <a href={'javascript:void(0)'} onClick={() => this.props.setViewport(itemPath)}>
           {icon}
           <span>{name}</span>
         </a>
@@ -140,15 +147,13 @@ class SiderMenu extends React.PureComponent<SiderMenuProps, State> {
     }
     return (
       <a
-        href={itemPath}
-        target={target}
-        onClick={
-          this.props.isMobile
-            ? () => {
-                this.props.onCollapse(true);
-              }
-            : undefined
-        }
+        href={'javascript:void(0)'}
+        onClick={() => {
+          this.props.setViewport(itemPath);
+          if (this.props.isMobile) {
+            this.props.onCollapse(true);
+          }
+        }}
       >
         {icon}
         <span>{name}</span>
@@ -246,7 +251,7 @@ class SiderMenu extends React.PureComponent<SiderMenuProps, State> {
         className={'sider'}
       >
         <div className={'menu-logo'}>
-          <a href="/">
+          <a href={'javascript:void(0)'} onClick={() => this.props.setViewport(routes.DEFAULT)}>
             <img src={logo} alt="logo" />
             <h1>Michelin</h1>
           </a>
@@ -274,5 +279,17 @@ const mapStateToProps = (state: stateTypes.State) => {
   };
 };
 
-const ConnectedDrawerSiderMenu = connect<StateProps>(mapStateToProps)(SiderMenu);
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return bindActionCreators(
+    {
+      setViewport,
+    },
+    dispatch,
+  );
+};
+
+const ConnectedDrawerSiderMenu = connect<StateProps, DispatchProps>(
+  mapStateToProps,
+  mapDispatchToProps,
+)(SiderMenu);
 export default ConnectedDrawerSiderMenu;

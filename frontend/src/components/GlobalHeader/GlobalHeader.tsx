@@ -4,14 +4,10 @@ import * as moment from 'moment';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators, Dispatch} from 'redux';
-import {ThunkAction} from 'redux-thunk';
-import {LogoutAction, logoutAndRedirect} from '../../actions/auth';
-import {
-  ClearNotificationsActions,
-  clearNotificationsIfNeeded,
-  LoadNotificationsActions,
-  loadNotificationsIfNeeded,
-} from '../../actions/notifications';
+import {logoutAndRedirect} from '../../actions/auth';
+import {clearNotificationsIfNeeded, loadNotificationsIfNeeded} from '../../actions/notifications';
+import {setViewport} from '../../actions/viewport';
+import * as routes from '../../constants/routes';
 import {getAuthDetails} from '../../reducers/auth';
 import {getNotifications} from '../../reducers/notifications';
 import {State} from '../../reducers/types';
@@ -30,9 +26,10 @@ interface OwnProps {
 }
 
 interface DispatchProps {
-  loadNotificationsIfNeeded: (token: string | null) => ThunkAction<void, State, void, LoadNotificationsActions>;
-  clearNotificationsIfNeeded: (token: string | null) => ThunkAction<void, State, void, ClearNotificationsActions>;
-  logoutAndRedirect: () => ThunkAction<void, State, void, LogoutAction>;
+  loadNotificationsIfNeeded: typeof loadNotificationsIfNeeded;
+  clearNotificationsIfNeeded: typeof clearNotificationsIfNeeded;
+  logoutAndRedirect: typeof logoutAndRedirect;
+  setViewport: typeof setViewport;
 }
 
 interface StateProps {
@@ -131,7 +128,12 @@ class GlobalHeader extends React.PureComponent<GlobalHeaderProps> {
     return (
       <Header className={'header'}>
         {isMobile && [
-          <a href={'/'} className={'header-logo'} key={'logo'}>
+          <a
+            href={'javascript:void(0)'}
+            onClick={() => this.props.setViewport(routes.DEFAULT)}
+            className={'header-logo'}
+            key={'logo'}
+          >
             <img src={logo} alt="logo" width="32" />
           </a>,
           <Divider type="vertical" key="line" />,
@@ -195,6 +197,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
       loadNotificationsIfNeeded,
       clearNotificationsIfNeeded,
       logoutAndRedirect,
+      setViewport,
     },
     dispatch,
   );

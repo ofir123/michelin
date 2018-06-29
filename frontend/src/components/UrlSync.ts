@@ -3,8 +3,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {push} from 'react-router-redux';
 import {bindActionCreators, Dispatch} from 'redux';
-import {ThunkAction} from 'redux-thunk';
-import {setViewport, ViewportActions} from '../actions/viewport';
+import {setViewport} from '../actions/viewport';
 import {getLocation} from '../reducers/rootReducer';
 import * as stateTypes from '../reducers/types';
 import {getViewport} from '../reducers/viewport';
@@ -16,7 +15,7 @@ type StateProps = {
 
 type DispatchProps = {
   push: typeof push;
-  setViewport: (viewport: string) => ThunkAction<void, stateTypes.State, void, ViewportActions>;
+  setViewport: typeof setViewport;
 };
 
 type URLSyncProps = StateProps & DispatchProps;
@@ -32,9 +31,11 @@ class URLSync extends React.Component<URLSyncProps> {
     const {viewport} = this.props.viewport;
 
     if (viewport) {
-      expectedUrl = decodeURI(viewport);
-      if (!this.props.location || expectedUrl !== this.props.location.pathname) {
-        this.props.push(expectedUrl);
+      if (viewport !== '/') {
+        expectedUrl = decodeURI(viewport);
+        if (!this.props.location || expectedUrl !== this.props.location.pathname) {
+          this.props.push(expectedUrl);
+        }
       }
     } else {
       throw new Error(`No viewport in state! URL cannot be computed!`);

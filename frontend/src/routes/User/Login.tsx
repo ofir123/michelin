@@ -3,6 +3,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators, Dispatch} from 'redux';
 import {loginIfNeeded} from '../../actions/auth';
+import {setViewport} from '../../actions/viewport';
 import * as routes from '../../constants/routes';
 import {getAuthStatus} from '../../reducers/auth';
 import * as stateTypes from '../../reducers/types';
@@ -16,6 +17,7 @@ interface OwnProps {
 
 interface DispatchProps {
   loginIfNeeded: typeof loginIfNeeded;
+  setViewport: typeof setViewport;
 }
 
 interface StateProps {
@@ -101,23 +103,30 @@ class LoginForm extends React.Component<LoginFormProps, State> {
               />,
             )}
           </Form.Item>
-          {this.props.errorMessage && <Alert type={'error'} message={this.props.errorMessage} showIcon={true} />}
+          {this.props.auth.errorMessage && (
+            <Alert
+              style={{marginBottom: '20px'}}
+              type={'error'}
+              message={this.props.auth.errorMessage}
+              showIcon={true}
+            />
+          )}
           <Form.Item style={{marginBottom: 0}}>
             {getFieldDecorator('remember', {
               valuePropName: 'checked',
               initialValue: true,
             })(<Checkbox>Remember me</Checkbox>)}
-            <a style={{float: 'right'}} href="">
+            <a style={{float: 'right'}} href={'javascript:void(0)'}>
               Forgot password
             </a>
           </Form.Item>
           <Form.Item style={{marginBottom: '12px'}}>
-            <Button type={'primary'} htmlType={'submit'} loading={this.props.isFetching} className={'form-button'}>
+            <Button type={'primary'} htmlType={'submit'} loading={this.props.auth.isFetching} className={'form-button'}>
               Log in
             </Button>
           </Form.Item>
-          <Button type={'primary'} className={'form-button'}>
-            <a href={routes.REGISTER}>Sign Up</a>
+          <Button type={'primary'} onClick={() => this.props.setViewport(routes.REGISTER)} className={'form-button'}>
+            Sign Up
           </Button>
         </Form>
       </div>
@@ -135,6 +144,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
       loginIfNeeded,
+      setViewport,
     },
     dispatch,
   );

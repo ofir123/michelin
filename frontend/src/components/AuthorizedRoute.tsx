@@ -1,21 +1,21 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators, Dispatch} from 'redux';
-import {LoginActions} from '../actions/auth';
-import {ViewportActions} from '../actions/viewport';
+import {loginSuccess} from '../actions/auth';
+import {setViewport} from '../actions/viewport';
 import * as api from '../api';
 import * as routes from '../constants/routes';
 import {getAuthDetails} from '../reducers/auth';
 import {AuthDetails, State} from '../reducers/types';
 
 interface OwnProps {
-  component: React.ReactNode;
+  component: any;
   roles: ReadonlyArray<string>;
 }
 
 interface DispatchProps {
-  loginSuccess: typeof LoginActions.loginSuccess;
-  setViewport: typeof ViewportActions.setViewport;
+  loginSuccess: typeof loginSuccess;
+  setViewport: typeof setViewport;
 }
 
 interface StateProps {
@@ -45,9 +45,9 @@ class AuthorizedRoute extends React.Component<AuthorizedRouteProps> {
   }
 
   render() {
-    const {auth, component, roles} = this.props;
-    if (auth.isAuthenticated && auth.role && roles.indexOf(auth.role) !== -1) {
-      return component;
+    const {auth, component: Component, roles} = this.props;
+    if (auth.isAuthenticated && auth.role && (!roles || roles.indexOf(auth.role) !== -1)) {
+      return <Component />;
     }
     this.props.setViewport(routes.LOGIN);
     return null;
@@ -63,8 +63,8 @@ const mapStateToProps = (state: State) => {
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
-      loginSuccess: LoginActions.loginSuccess,
-      setViewport: ViewportActions.setViewport,
+      loginSuccess,
+      setViewport,
     },
     dispatch,
   );

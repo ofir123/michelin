@@ -43,6 +43,10 @@ export const loginIfNeeded = (email: string, password: string, remember: boolean
   }
 };
 
+export const loginSuccess = (token: string) => async (dispatch: Dispatch) => {
+  dispatch(LoginActions.loginSuccess(token));
+};
+
 export const LOGOUT = 'LOGOUT';
 
 export const LogoutAction = {

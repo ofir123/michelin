@@ -14,7 +14,7 @@ class ApiError extends Error {
   }
 }
 
-const tokenConfig = (token: string) => ({
+const tokenConfig = (token: string | null) => ({
   headers: {
     Authorization: token,
   },
@@ -75,19 +75,19 @@ export const loadOrganizations = () =>
     .then(handleResponse)
     .catch(handleError);
 
-export const getOrganization = (organizationId: number, token: string) =>
+export const getOrganization = (organizationId: number, token: string | null) =>
   axios
     .get(`${BACKEND_URL}/organization/${organizationId}`, tokenConfig(token))
     .then(handleResponse)
     .catch(handleError);
 
-export const loadNotifications = (token: string) =>
+export const loadNotifications = (token: string | null) =>
   axios
     .get(`${BACKEND_URL}/notification`, tokenConfig(token))
     .then(handleResponse)
     .catch(handleError);
 
-export const clearNotifications = (token: string) =>
+export const clearNotifications = (token: string | null) =>
   axios
     .delete(`${BACKEND_URL}/notification`, tokenConfig(token))
     .then(handleResponse)
