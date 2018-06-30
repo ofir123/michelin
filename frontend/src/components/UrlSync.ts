@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {push} from 'react-router-redux';
 import {bindActionCreators, Dispatch} from 'redux';
 import {setViewport} from '../actions/viewport';
-import {getLocation} from '../reducers/rootReducer';
+import {getLocation} from '../reducers/router';
 import * as stateTypes from '../reducers/types';
 import {getViewport} from '../reducers/viewport';
 
@@ -65,7 +65,7 @@ class URLSync extends React.Component<URLSyncProps> {
   }
 
   render() {
-    return null;
+    return false;
   }
 }
 

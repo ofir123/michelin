@@ -28,6 +28,8 @@ export const auth: Reducer<AuthState> = (
   state = initialState,
   action: FromActions.LoginActions | FromActions.LogoutAction | FromActions.RegisterActions,
 ) => {
+  let newToken = null;
+
   switch (action.type) {
     case FromActions.REGISTER_REQUEST:
     case FromActions.LOGIN_REQUEST:
@@ -38,8 +40,16 @@ export const auth: Reducer<AuthState> = (
         isFetching: true,
       };
     case FromActions.REGISTER_SUCCESS:
+      newToken = jwtDecode<TokenDetails>(action.payload);
+      return {
+        ...state,
+        email: newToken.email,
+        organizationId: newToken.organization_id,
+        errorMessage: null,
+        isFetching: false,
+      };
     case FromActions.LOGIN_SUCCESS:
-      const newToken = jwtDecode<TokenDetails>(action.payload);
+      newToken = jwtDecode<TokenDetails>(action.payload);
       return {
         avatar: undefined,
         email: newToken.email,

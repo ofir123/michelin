@@ -46,6 +46,7 @@ module.exports = function override(config, env) {
   config.plugins[checkerPluginIdx] = new ForkTsCheckerWebpackPlugin({tsconfig: 'tsconfig.build.json'});
 
   config = rewireLess.withLoaderOptions({
+    javascriptEnabled: true,
     modifyVars: {
       // Fetch icons locally instead of Alibaba CDN (https://ant.design/docs/react/customize-theme).
       '@icon-url': '"/iconfont"',

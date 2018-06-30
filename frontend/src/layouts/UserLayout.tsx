@@ -54,21 +54,26 @@ type UserLayoutProps = OwnProps & StateProps & DispatchProps;
 class UserLayout extends React.PureComponent<UserLayoutProps> {
   componentWillMount() {
     const {auth} = this.props;
+    const {viewport} = this.props.viewport;
+
     // Redirect if user is already logged in (and the state is updated accordingly).
     if (auth.isAuthenticated && auth.role) {
       this.props.setViewport(routes.DEFAULT);
+    } else if (!this.props.routerData[viewport]) {
+      // Handle default route.
+      this.props.setViewport(routes.LOGIN);
     }
   }
 
   render() {
     const {routerData} = this.props;
-    const {viewport} = this.props.viewport;
+    const viewportContent = routerData[this.props.viewport.viewport];
 
-    const viewportContent = routerData[viewport];
+    // Don't render anything, and wait for the login redirect to happen.
     if (!viewportContent) {
-      this.props.setViewport(routes.LOGIN);
-      return null;
+      return false;
     }
+
     const ViewportComponent = viewportContent.component as React.ComponentClass;
 
     return (

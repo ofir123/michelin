@@ -13,5 +13,3 @@ export const rootReducer: Reducer<State> = combineReducers<State>({
   router: routerReducer,
   viewport,
 });
-
-export const getLocation = (state: State) => state.router.location;

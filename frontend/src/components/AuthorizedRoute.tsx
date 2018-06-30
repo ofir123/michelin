@@ -27,6 +27,12 @@ type AuthorizedRouteProps = OwnProps & DispatchProps & StateProps;
 class AuthorizedRoute extends React.Component<AuthorizedRouteProps> {
   componentWillMount() {
     this.checkAuth();
+
+    // Redirect to login if needed.
+    const {auth, roles} = this.props;
+    if (!auth.isAuthenticated || !auth.role || (roles && roles.length > 0 && roles.indexOf(auth.role) === -1)) {
+      this.props.setViewport(routes.LOGIN);
+    }
   }
 
   componentWillReceiveProps(nextProps: AuthorizedRouteProps) {
@@ -45,12 +51,8 @@ class AuthorizedRoute extends React.Component<AuthorizedRouteProps> {
   }
 
   render() {
-    const {auth, component: Component, roles} = this.props;
-    if (auth.isAuthenticated && auth.role && (!roles || roles.indexOf(auth.role) !== -1)) {
-      return <Component />;
-    }
-    this.props.setViewport(routes.LOGIN);
-    return null;
+    const {component: Component} = this.props;
+    return <Component />;
   }
 }
 

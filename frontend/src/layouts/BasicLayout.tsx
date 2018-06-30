@@ -59,6 +59,18 @@ class BasicLayout extends React.PureComponent<BasicLayoutProps, State> {
     });
   }
 
+  componentWillMount() {
+    const {viewport} = this.props.viewport;
+
+    // Handle default.
+    if (viewport === '/') {
+      this.props.setViewport(routes.ANALYSIS);
+    } else if (!this.props.routerData[viewport]) {
+      // Handle invalid routes.
+      this.props.setViewport(routes.NOT_FOUND_ERROR);
+    }
+  }
+
   componentWillUnmount() {
     unenquireScreen(this.enquireHandler);
   }
@@ -83,18 +95,11 @@ class BasicLayout extends React.PureComponent<BasicLayoutProps, State> {
 
   render() {
     const {routerData} = this.props;
-    const {viewport} = this.props.viewport;
+    const content = routerData[this.props.viewport.viewport];
 
-    // Default route.
-    if (viewport === '/') {
-      this.props.setViewport(routes.ANALYSIS);
-      return null;
-    }
-
-    const content = routerData[viewport];
+    // Don't render anything, and wait for the 404 page redirect to happen.
     if (!content) {
-      this.props.setViewport(routes.NOT_FOUND_ERROR);
-      return null;
+      return false;
     }
 
     const layout = (
