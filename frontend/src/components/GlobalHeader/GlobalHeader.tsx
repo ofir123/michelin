@@ -40,7 +40,7 @@ interface StateProps {
 type GlobalHeaderProps = OwnProps & DispatchProps & StateProps;
 
 class GlobalHeader extends React.PureComponent<GlobalHeaderProps> {
-  componentWillMount() {
+  componentDidMount() {
     this.props.loadNotificationsIfNeeded(this.props.auth.token);
   }
 

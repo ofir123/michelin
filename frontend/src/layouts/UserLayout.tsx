@@ -52,7 +52,7 @@ type DispatchProps = {
 type UserLayoutProps = OwnProps & StateProps & DispatchProps;
 
 class UserLayout extends React.PureComponent<UserLayoutProps> {
-  componentWillMount() {
+  componentDidMount() {
     const {auth} = this.props;
     const {viewport} = this.props.viewport;
 

@@ -25,7 +25,7 @@ interface StateProps {
 type AuthorizedRouteProps = OwnProps & DispatchProps & StateProps;
 
 class AuthorizedRoute extends React.Component<AuthorizedRouteProps> {
-  componentWillMount() {
+  componentDidMount() {
     this.checkAuth();
 
     // Redirect to login if needed.
@@ -35,8 +35,8 @@ class AuthorizedRoute extends React.Component<AuthorizedRouteProps> {
     }
   }
 
-  componentWillReceiveProps(nextProps: AuthorizedRouteProps) {
-    this.checkAuth(nextProps);
+  componentDidUpdate() {
+    this.checkAuth();
   }
 
   checkAuth(props: AuthorizedRouteProps = this.props) {

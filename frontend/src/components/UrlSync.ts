@@ -42,7 +42,7 @@ class URLSync extends React.Component<URLSyncProps> {
     }
   };
 
-  componentWillMount() {
+  componentDidMount() {
     // Before mounting (when the app is starting) we parse the URL and update the state (if the URL is not just '/').
     if (!this.props.location || this.props.location.pathname === '/') {
       // Default values are set by the reducers, we just need to update the URL.

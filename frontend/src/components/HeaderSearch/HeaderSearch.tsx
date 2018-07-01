@@ -79,7 +79,7 @@ export default class HeaderSearch extends React.PureComponent<Props, State> {
         >
           <Input
             placeholder={placeholder}
-            ref={node => {
+            ref={(node: Input | null) => {
               this.input = node;
             }}
             onKeyDown={this.onKeyDown}

@@ -58,9 +58,12 @@ class SiderMenu extends React.PureComponent<SiderMenuProps, State> {
       openKeys: this.getDefaultCollapsedSubMenus(props.viewport.viewport),
     };
   }
-  componentWillReceiveProps(nextProps: SiderMenuProps) {
-    const nextPathname = nextProps.viewport.viewport;
-    if (nextPathname !== this.props.viewport.viewport) {
+
+  componentDidUpdate(prevProps: SiderMenuProps) {
+    const prevPathname = prevProps.viewport.viewport;
+    const nextPathname = this.props.viewport.viewport;
+
+    if (prevPathname !== nextPathname) {
       this.setState({
         openKeys: this.getDefaultCollapsedSubMenus(nextPathname),
       });

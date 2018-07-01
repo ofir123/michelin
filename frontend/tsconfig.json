@@ -5,5 +5,5 @@
     "outDir": "lib",
     "baseUrl": "."
   },
-  "exclude": ["node_modules", "config-overrides.js", "lib", "build"]
+  "exclude": ["config-overrides.js", "lib", "build"]
 }

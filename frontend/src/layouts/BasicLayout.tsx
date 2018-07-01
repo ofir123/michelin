@@ -57,9 +57,7 @@ class BasicLayout extends React.PureComponent<BasicLayoutProps, State> {
         isMobile: mobile,
       });
     });
-  }
 
-  componentWillMount() {
     const {viewport} = this.props.viewport;
 
     // Handle default.

@@ -28,15 +28,12 @@ export default function loadDynamicComponent(config: ConfigType) {
 
     mounted: boolean;
 
-    componentDidMount() {
-      this.mounted = true;
-    }
-
     componentWillUnmount() {
       this.mounted = false;
     }
 
-    async componentWillMount() {
+    async componentDidMount() {
+      this.mounted = true;
       const Component = await resolveComponent();
       if (this.mounted) {
         this.setState({Component});
