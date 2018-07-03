@@ -2,6 +2,8 @@
 
 The one and only TypeScript + React + Redux + Flask boilerplate!
 
+![Screenshot](docs/images/screenshot.png)
+
 ## Main Features
 
 #### [JWT](https://jwt.io/) Based User Management
