@@ -18,7 +18,9 @@ interface DispatchProps {
 type LinkProps = OwnProps & DispatchProps;
 
 const onClick = (event: React.MouseEvent<HTMLAnchorElement>, props: LinkProps) => {
+  // Disable href routing.
   event.preventDefault();
+
   if (props.onClick) {
     props.onClick(event);
   }
