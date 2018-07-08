@@ -3,12 +3,11 @@ import * as _ from 'lodash';
 import pathToRegexp from 'path-to-regexp';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {bindActionCreators, Dispatch} from 'redux';
-import {setViewport} from '../../actions/viewport';
 import * as routes from '../../constants/routes';
 import {getAuthDetails} from '../../reducers/auth';
 import * as stateTypes from '../../reducers/types';
 import {getViewport} from '../../reducers/viewport';
+import Link from '../Link';
 import './SiderMenu.css';
 
 const {Sider} = Layout;
@@ -41,11 +40,7 @@ interface StateProps {
   viewport: stateTypes.ViewportState;
 }
 
-interface DispatchProps {
-  setViewport: typeof setViewport;
-}
-
-type SiderMenuProps = OwnProps & StateProps & DispatchProps;
+type SiderMenuProps = OwnProps & StateProps;
 
 type State = {
   openKeys: string[];
@@ -142,17 +137,16 @@ class SiderMenu extends React.PureComponent<SiderMenuProps, State> {
     // Is it a http link
     if (/^https?:\/\//.test(itemPath)) {
       return (
-        <a href={'javascript:void(0)'} onClick={() => this.props.setViewport(itemPath)}>
+        <Link route={itemPath}>
           {icon}
           <span>{name}</span>
-        </a>
+        </Link>
       );
     }
     return (
-      <a
-        href={'javascript:void(0)'}
+      <Link
+        route={itemPath}
         onClick={() => {
-          this.props.setViewport(itemPath);
           if (this.props.isMobile) {
             this.props.onCollapse(true);
           }
@@ -160,7 +154,7 @@ class SiderMenu extends React.PureComponent<SiderMenuProps, State> {
       >
         {icon}
         <span>{name}</span>
-      </a>
+      </Link>
     );
   };
 
@@ -254,10 +248,10 @@ class SiderMenu extends React.PureComponent<SiderMenuProps, State> {
         className={'sider'}
       >
         <div className={'menu-logo'}>
-          <a href={'javascript:void(0)'} onClick={() => this.props.setViewport(routes.DEFAULT)}>
+          <Link route={routes.DEFAULT}>
             <img src={logo} alt="logo" />
             <h1>Michelin</h1>
-          </a>
+          </Link>
         </div>
         <Menu
           key="Menu"
@@ -282,17 +276,5 @@ const mapStateToProps = (state: stateTypes.State) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators(
-    {
-      setViewport,
-    },
-    dispatch,
-  );
-};
-
-const ConnectedDrawerSiderMenu = connect<StateProps, DispatchProps>(
-  mapStateToProps,
-  mapDispatchToProps,
-)(SiderMenu);
+const ConnectedDrawerSiderMenu = connect<StateProps>(mapStateToProps)(SiderMenu);
 export default ConnectedDrawerSiderMenu;

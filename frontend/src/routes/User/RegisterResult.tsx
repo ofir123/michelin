@@ -1,8 +1,7 @@
 import {Button} from 'antd';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {bindActionCreators, Dispatch} from 'redux';
-import {setViewport} from '../../actions/viewport';
+import Link from '../../components/Link';
 import {Result} from '../../components/Result/index';
 import * as routes from '../../constants/routes';
 import {getAuthDetails} from '../../reducers/auth';
@@ -14,17 +13,13 @@ interface StateProps {
   auth: stateTypes.AuthDetails;
 }
 
-interface DispatchProps {
-  setViewport: typeof setViewport;
-}
-
-type RegisterResultProps = StateProps & DispatchProps;
+type RegisterResultProps = StateProps;
 
 const RegisterResult = (props: RegisterResultProps) => {
   const actions = (
     <div className={'actions'}>
-      <Button size="large" onClick={() => props.setViewport(routes.DEFAULT)}>
-        Return to home page
+      <Button type={'primary'} size={'large'}>
+        <Link route={routes.DEFAULT}>Return to Home Page</Link>
       </Button>
     </div>
   );
@@ -47,17 +42,5 @@ const mapStateToProps = (state: State) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators(
-    {
-      setViewport,
-    },
-    dispatch,
-  );
-};
-
-const ConnectedRegisterResult = connect<StateProps, DispatchProps>(
-  mapStateToProps,
-  mapDispatchToProps,
-)(RegisterResult);
+const ConnectedRegisterResult = connect<StateProps>(mapStateToProps)(RegisterResult);
 export default ConnectedRegisterResult;

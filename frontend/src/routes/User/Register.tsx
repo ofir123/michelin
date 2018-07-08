@@ -3,7 +3,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators, Dispatch} from 'redux';
 import {registerIfNeeded} from '../../actions/auth';
-import {setViewport} from '../../actions/viewport';
+import Link from '../../components/Link';
 import {OrganizationSelect} from '../../components/User';
 import * as routes from '../../constants/routes';
 import '../../index.css';
@@ -23,7 +23,6 @@ interface StateProps {
 
 interface DispatchProps {
   registerIfNeeded: typeof registerIfNeeded;
-  setViewport: typeof setViewport;
 }
 
 interface State {
@@ -187,8 +186,8 @@ class RegisterForm extends React.Component<RegisterFormProps, State> {
               Register
             </Button>
           </Form.Item>
-          <Button type={'primary'} onClick={() => this.props.setViewport(routes.LOGIN)} className={'form-button'}>
-            Back to Login Page
+          <Button type={'primary'} className={'form-button'}>
+            <Link route={routes.LOGIN}>Back to Login Page</Link>
           </Button>
         </Form>
       </div>
@@ -206,7 +205,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
       registerIfNeeded,
-      setViewport,
     },
     dispatch,
   );

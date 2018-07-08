@@ -6,13 +6,13 @@ import {connect} from 'react-redux';
 import {bindActionCreators, Dispatch} from 'redux';
 import {logoutAndRedirect} from '../../actions/auth';
 import {clearNotificationsIfNeeded, loadNotificationsIfNeeded} from '../../actions/notifications';
-import {setViewport} from '../../actions/viewport';
 import * as routes from '../../constants/routes';
 import {getAuthDetails} from '../../reducers/auth';
 import {getNotifications} from '../../reducers/notifications';
 import {State} from '../../reducers/types';
 import * as stateTypes from '../../reducers/types';
 import {HeaderSearch} from '../HeaderSearch';
+import Link from '../Link';
 import {NoticeIcon, NotificationDetails} from '../NoticeIcon';
 import './GlobalHeader.css';
 
@@ -29,7 +29,6 @@ interface DispatchProps {
   loadNotificationsIfNeeded: typeof loadNotificationsIfNeeded;
   clearNotificationsIfNeeded: typeof clearNotificationsIfNeeded;
   logoutAndRedirect: typeof logoutAndRedirect;
-  setViewport: typeof setViewport;
 }
 
 interface StateProps {
@@ -128,14 +127,9 @@ class GlobalHeader extends React.PureComponent<GlobalHeaderProps> {
     return (
       <Header className={'header'}>
         {isMobile && [
-          <a
-            href={'javascript:void(0)'}
-            onClick={() => this.props.setViewport(routes.DEFAULT)}
-            className={'header-logo'}
-            key={'logo'}
-          >
-            <img src={logo} alt="logo" width="32" />
-          </a>,
+          <Link route={routes.DEFAULT} className={'header-logo'} key={'logo'}>
+            <img src={logo} alt={'logo'} width={32} />
+          </Link>,
           <Divider type="vertical" key="line" />,
         ]}
         <Icon className={'trigger'} type={menuCollapsed ? 'menu-unfold' : 'menu-fold'} onClick={this.toggle} />
@@ -197,7 +191,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
       loadNotificationsIfNeeded,
       clearNotificationsIfNeeded,
       logoutAndRedirect,
-      setViewport,
     },
     dispatch,
   );

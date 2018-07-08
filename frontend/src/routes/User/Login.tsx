@@ -3,7 +3,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators, Dispatch} from 'redux';
 import {loginIfNeeded} from '../../actions/auth';
-import {setViewport} from '../../actions/viewport';
+import Link from '../../components/Link';
 import * as routes from '../../constants/routes';
 import {getAuthStatus} from '../../reducers/auth';
 import * as stateTypes from '../../reducers/types';
@@ -17,7 +17,6 @@ interface OwnProps {
 
 interface DispatchProps {
   loginIfNeeded: typeof loginIfNeeded;
-  setViewport: typeof setViewport;
 }
 
 interface StateProps {
@@ -125,8 +124,8 @@ class LoginForm extends React.Component<LoginFormProps, State> {
               Log in
             </Button>
           </Form.Item>
-          <Button type={'primary'} onClick={() => this.props.setViewport(routes.REGISTER)} className={'form-button'}>
-            Sign Up
+          <Button type={'primary'} className={'form-button'}>
+            <Link route={routes.REGISTER}>Sign Up</Link>
           </Button>
         </Form>
       </div>
@@ -144,7 +143,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
       loginIfNeeded,
-      setViewport,
     },
     dispatch,
   );
